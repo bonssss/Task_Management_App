@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Task(models.Model):
     PRIORITY_CHOICES = [
@@ -26,6 +27,19 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def mark_complete(self):
+        if self.status != 'completed':
+            self.status = 'completed'
+            self.completed_at = timezone.now()
+            self.save()
+
+    def mark_incomplete(self):
+        if self.status == 'completed':
+            self.status = 'pending'
+            self.completed_at = None
+            self.save()
+    
 
     class Meta:
         ordering = ['-created_at']
